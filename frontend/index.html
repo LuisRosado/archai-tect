@@ -1,79 +1,290 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>ArchAItect - AI System Design Generator</title>
-
     <meta charset="UTF-8">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArchAItect - AI System Design Generator</title>
+    <link rel="icon" href="/static/favicon.ico">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Mermaid.js -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0ea5e9',
+                        'primary-dark': '#0284c7',
+                        surface: '#ffffff',
+                        background: '#f8fafc',
+                        muted: '#64748b',
+                        border: '#e2e8f0',
+                    }
+                }
+            }
+        }
+    </script>
+    
     <script>
         mermaid.initialize({
-            startOnLoad: false
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#0ea5e9',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#0284c7',
+                lineColor: '#64748b',
+                secondaryColor: '#f1f5f9',
+                tertiaryColor: '#f8fafc'
+            }
         });
     </script>
-
+    
     <style>
-
-        body{
-            font-family: Arial, Helvetica, sans-serif;
-            margin:40px;
-            background:#f5f5f5;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
         }
-
-        textarea{
-            width:600px;
-            font-size:16px;
+        
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
         }
-
-        button{
-            padding:10px 20px;
-            font-size:16px;
-            cursor:pointer;
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-
-        pre{
-            background:white;
-            padding:15px;
-            border-radius:5px;
-            width:600px;
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
         }
-
-        #diagram{
-            background:white;
-            padding:20px;
-            border-radius:5px;
-            margin-top:10px;
-            width:800px;
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
-
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #0ea5e9;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Fade in animation */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Diagram container */
+        #diagram svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Badge hover effect */
+        .tech-badge {
+            transition: all 0.2s ease;
+        }
+        
+        .tech-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Component item hover */
+        .component-item {
+            transition: all 0.2s ease;
+        }
+        
+        .component-item:hover {
+            background-color: #f1f5f9;
+        }
     </style>
-
 </head>
-
-<body>
-
-<h2>AI System Design Generator</h2>
-
-<textarea id="prompt" rows="6">
-architecture for chat application
-</textarea>
-
-<br><br>
-
-<button onclick="generate()">Generate Architecture</button>
-
-<h3>Components</h3>
-<pre id="components"></pre>
-
-<h3>Tech Stack</h3>
-<pre id="techstack"></pre>
-
-<h3>Architecture Diagram</h3>
-<div id="diagram"></div>
-
-<script src="/static/script.js"></script>
-
+<body class="bg-background min-h-screen">
+    <!-- Header -->
+    <header class="bg-surface border-b border-border sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">ArchAItect</h1>
+                    <p class="text-sm text-muted">AI System Design Generator</p>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Input Section -->
+        <section class="mb-8">
+            <div class="bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-border bg-gray-50">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        Describe Your System
+                    </h2>
+                    <p class="text-sm text-muted mt-1">Enter a description of the system you want to design</p>
+                </div>
+                <div class="p-6">
+                    <textarea 
+                        id="prompt" 
+                        rows="4" 
+                        placeholder="e.g., architecture for a real-time chat application with user authentication, message persistence, and push notifications..."
+                        class="w-full px-4 py-3 rounded-lg border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none text-gray-900 placeholder-gray-400 font-mono text-sm"
+                    >architecture for chat application</textarea>
+                    
+                    <div class="mt-4 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+                        <div class="flex items-center gap-2 text-sm text-muted">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Be specific about features, scale, and requirements</span>
+                        </div>
+                        <button 
+                            id="generateBtn"
+                            onclick="generate()" 
+                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary-dark text-white font-medium rounded-lg transition-colors shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg id="generateIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            <span id="generateText">Generate Architecture</span>
+                            <div id="loadingSpinner" class="spinner hidden"></div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Error Alert -->
+        <div id="errorAlert" class="hidden mb-8 bg-red-50 border border-red-200 rounded-xl p-4 fade-in">
+            <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div>
+                    <h3 class="font-medium text-red-800">Generation Failed</h3>
+                    <p id="errorMessage" class="text-sm text-red-600 mt-1">An error occurred while generating the architecture.</p>
+                </div>
+                <button onclick="hideError()" class="ml-auto text-red-400 hover:text-red-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="results" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Components Card -->
+                <section class="bg-surface rounded-xl border border-border shadow-sm overflow-hidden fade-in">
+                    <div class="px-6 py-4 border-b border-border bg-gray-50">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                            System Components
+                        </h2>
+                        <p class="text-sm text-muted mt-1">Core building blocks of your architecture</p>
+                    </div>
+                    <div class="p-6">
+                        <ul id="components" class="space-y-2">
+                            <!-- Components will be rendered here -->
+                        </ul>
+                    </div>
+                </section>
+                
+                <!-- Tech Stack Card -->
+                <section class="bg-surface rounded-xl border border-border shadow-sm overflow-hidden fade-in">
+                    <div class="px-6 py-4 border-b border-border bg-gray-50">
+                        <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                            </svg>
+                            Technology Stack
+                        </h2>
+                        <p class="text-sm text-muted mt-1">Recommended technologies for implementation</p>
+                    </div>
+                    <div class="p-6">
+                        <div id="techstack" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Tech stack will be rendered here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Architecture Diagram Card -->
+            <section class="bg-surface rounded-xl border border-border shadow-sm overflow-hidden fade-in">
+                <div class="px-6 py-4 border-b border-border bg-gray-50">
+                    <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                        </svg>
+                        Architecture Diagram
+                    </h2>
+                    <p class="text-sm text-muted mt-1">Visual representation of your system design</p>
+                </div>
+                <div class="p-6">
+                    <div id="diagram" class="bg-gray-50 rounded-lg border border-border p-6 min-h-[300px] flex items-center justify-center overflow-auto">
+                        <!-- Diagram will be rendered here -->
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-16">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Architecture Generated Yet</h3>
+            <p class="text-muted max-w-md mx-auto">Enter a system description above and click "Generate Architecture" to create a comprehensive system design with components, tech stack, and visual diagram.</p>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="border-t border-border bg-surface mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <p class="text-center text-sm text-muted">
+                Powered by AI • Built for developers
+            </p>
+        </div>
+    </footer>
+    
+    <script src="/static/script.js"></script>
 </body>
 </html>
