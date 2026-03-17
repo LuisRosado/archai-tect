@@ -10,6 +10,9 @@ The application uses a local LLM via Ollama to analyze system requirements and a
 
 The goal of this project is to demonstrate how modern AI tools can assist developers in system design and architecture planning.
 
+
+![Image](https://github.com/user-attachments/assets/7b686cda-e333-486a-9978-89535f64d6a6)
+
 ---
 
 ## Features
